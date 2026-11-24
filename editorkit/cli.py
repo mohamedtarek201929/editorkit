@@ -1,6 +1,6 @@
 import argparse
 import sys
-from . import srt
+from . import srt, arabic
 
 
 def _read(p):
@@ -31,6 +31,9 @@ def main(argv=None):
     s.add_argument("input"); s.add_argument("-w", "--width", type=int, default=42)
     s.add_argument("--max-lines", type=int, default=2); s.add_argument("--max-cps", type=float, default=20.0)
 
+    s = sub.add_parser("arabic", help="check Arabic captions for Latin punctuation and stray line-start marks")
+    s.add_argument("input"); s.add_argument("--fix", action="store_true", help="write fixed captions"); s.add_argument("-o", "--output")
+
     s = sub.add_parser("merge", help="append second file after the first")
     s.add_argument("first"); s.add_argument("second"); s.add_argument("-o", "--output")
 
@@ -46,6 +49,14 @@ def main(argv=None):
         issues = srt.check(_read(a.input), a.width, a.max_lines, a.max_cps)
         print("\n".join(issues) if issues else "no problems found")
         return 1 if issues else 0
+    elif a.cmd == "arabic":
+        cues = _read(a.input)
+        if a.fix:
+            _write(arabic.fix(cues), a.output)
+        else:
+            issues = arabic.check(cues)
+            print("\n".join(issues) if issues else "no problems found")
+            return 1 if issues else 0
     elif a.cmd == "merge":
         _write(srt.merge(_read(a.first), _read(a.second)), a.output)
     elif a.cmd == "chapters":
