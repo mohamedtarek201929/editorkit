@@ -16,6 +16,13 @@ Requires Python 3.9+. No third-party packages.
     python -m editorkit merge part1.srt part2.srt -o full.srt
     python -m editorkit chapters captions.srt                  # draft chapters from pauses
 
+    python -m editorkit arabic captions.srt                    # Latin punctuation / stray marks in Arabic cues
+    python -m editorkit arabic captions.srt --fix -o fixed.srt
+
+`arabic` is experimental. It only looks at punctuation and wrapped line starts in cues that contain
+Arabic letters. Mixed Arabic/English text can use Latin punctuation on purpose, so treat the findings
+as suggestions and review the result. It has been tested on small hand-written samples only.
+
 `chapters` output is a draft. Rename the chapters yourself before publishing.
 
 ## Tests
